@@ -112,7 +112,19 @@ class Subscriber
             $mergeVars = $this->_helper->getMergeVars($subscriber, $email);
             try {
                 $md5HashEmail = md5(strtolower($email));
-                $return = $api->lists->members->addOrUpdate($this->_helper->getDefaultList(), $md5HashEmail, null, $status, $mergeVars, null, null, null, null, $email, $status);
+                //$code = $this->_storeManager->getStore()->getCode(); //Store Views code
+
+                /** @var \Magento\Framework\ObjectManagerInterface $om */
+                $om = \Magento\Framework\App\ObjectManager::getInstance();
+                /** @var \Magento\Framework\Locale\Resolver $resolver */
+                $resolver = $om->get('Magento\Framework\Locale\Resolver');
+                
+                $local= $resolver->getLocale();
+                $local = substr($local, 0, 2);
+
+                $return = $api->lists->members->addOrUpdate($this->_helper->getDefaultList(), $md5HashEmail, null, $status, $mergeVars, null, $local, null, null, $email, $status);
+
+            
             } catch (\Exception $e) {
                 $this->_helper->log($e->getMessage());
             }
